@@ -57,8 +57,8 @@ public class ReportFragment extends Fragment {
         anyChartView.setProgressBar(root.findViewById(R.id.loadingBar));
 
         // Create initial chart (hourly)
-//        Cartesian cartesian = createHourBarChart();
-        Cartesian cartesian = createWeeklyBarChart();
+        Cartesian cartesian = createHourBarChart();
+//        Cartesian cartesian = createWeeklyBarChart();
         anyChartView.setChart(cartesian);
 
         return root;
@@ -134,9 +134,11 @@ public class ReportFragment extends Fragment {
             @Override
             public void onTabSelected(TabLayout.Tab tab) {
                 if (tab.getPosition() == 0) {
+                    binding.textView5.setText("Hourly report");
                     anyChartView.setChart(createHourBarChart());
                     Toast.makeText(getActivity(), "Hourly Report Selected", Toast.LENGTH_SHORT).show();
                 } else {
+                    binding.textView5.setText("Daily report");
                     anyChartView.setChart(createWeeklyBarChart());
                     Toast.makeText(getActivity(), "Daily Report Selected", Toast.LENGTH_SHORT).show();
                 }

@@ -1,24 +1,30 @@
-\section{Exercise 1 – Android Basics}
-
-\begin{enumerate}
-    \item  \textbf{What does the \texttt{android:minSdkVersion} in an Android project indicate?}
-
-    The \texttt{android:minSdkVersion} attribute specifies the minimum Android OS version that the app can run on. It ensures that the app will only be installable on devices with an OS version \textit{equal to or higher} than the declared version. For example, if \texttt{minSdkVersion} is set to 21, the app will only work on devices running Android 5.0 (Lollipop) or newer.
-    \\
+\section{Data storage and visualization}
     
-    \item \textbf{Why does Android documentation indicate that declaring the attribute \texttt{android:\\maxSdkVersion} is not recommended?}
-
-    The Android documentation advises against using \texttt{maxSdkVersion} because it restricts the app's availability for future Android versions. If this attribute is set, the app won't be available for users running newer versions of Android, even if it could still work. This can cause compatibility and distribution issues as new Android versions are released.
-    \\
+    As can be seen in Figure~\ref{fig:thePicture} the Report fragment has now a two switch tab
+    that allows the user to select the time chunks for the chart in the same View.
     
-    \item \textbf{What are the two types of Navigation Drawer? Explain the differences between the two types.}
+\subsection{fragment\_report.xml}\label{subsec:fragment_report.xml}
+        The first thing I needed to was to add was the \textbf{TabLayout} in file
+        \textit{fragment\_report.xml}.
 
-    There are two types of Navigation Drawer in Android:
-    \begin{itemize}
-        \item \textbf{Permanent Navigation Drawer}: This type is always visible alongside the app's content, often used in tablet layouts or on large screens. The main content of the app is displayed next to the drawer.
-        \item \textbf{Modal Navigation Drawer}: This type is hidden by default and slides in over the app's content when triggered. It is commonly used in mobile apps where screen space is limited.
-    \end{itemize}
+    \lstinputlisting[
+        firstline=10,
+        lastline=16,
+        firstnumber=10,
+        caption=\texttt{\codepath/res/layout/fragment\_report.xml}
+        ,label={lst:frag}
+    ]{\codepath/res/layout/fragment_report.xml}
+    
+    I also rename the \textbf{AnyChartView} from \textit{hourBarChart} to \textit{barChart}
+        since it will now follow a double purpose not only for hourly display but also for daily
+        count of steps.
+    
+\subsection{StepAppOpenHelper.java}
     
 
-    \textbf{Differences:} The permanent drawer is better suited for larger screens where space is not an issue, while the modal drawer is more suitable for smaller screens, as it saves space by presenting the drawer as an overlay.
-\end{enumerate}
+
+\subsection{ReportFragment.java}
+
+
+
+
