@@ -9,6 +9,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.annotation.ColorLong;
 import androidx.annotation.NonNull;
@@ -37,6 +38,9 @@ import com.anychart.enums.TooltipPositionMode;
 import com.example.stepappv4.StepAppOpenHelper;
 import com.example.stepappv4.databinding.FragmentReportBinding;
 import com.example.stepappv4.R;
+import com.google.android.material.tabs.TabLayout;
+import androidx.annotation.Nullable;
+
 
 public class ReportFragment extends Fragment {
 
@@ -145,5 +149,36 @@ public class ReportFragment extends Fragment {
 
 
         return cartesian;
+    }
+
+
+    // TODO: Logic for tab switching
+    @Override
+    public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
+        super.onViewCreated(view, savedInstanceState);
+
+        TabLayout tabLayout = view.findViewById(R.id.tabLayout);
+        tabLayout.addTab(tabLayout.newTab().setText("Hourly"));
+        tabLayout.addTab(tabLayout.newTab().setText("Daily"));
+
+        tabLayout.addOnTabSelectedListener(new TabLayout.OnTabSelectedListener() {
+            @Override
+            public void onTabSelected(TabLayout.Tab tab) {
+                // Update the chart based on the selected tab
+                if (tab.getPosition() == 0) {
+                    // Load hourly report
+                    Toast.makeText(getActivity(), "Hourly Report Selected", Toast.LENGTH_SHORT).show();
+                } else {
+                    // Load daily report
+                    Toast.makeText(getActivity(), "Daily Report Selected", Toast.LENGTH_SHORT).show();
+                }
+            }
+
+            @Override
+            public void onTabUnselected(TabLayout.Tab tab) {}
+
+            @Override
+            public void onTabReselected(TabLayout.Tab tab) {}
+        });
     }
 }
