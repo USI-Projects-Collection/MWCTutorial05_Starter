@@ -7,9 +7,12 @@ import android.database.sqlite.SQLiteOpenHelper;
 import android.util.Log;
 import android.widget.Toast;
 
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 import java.util.TreeMap;
 
@@ -126,6 +129,45 @@ public class StepAppOpenHelper extends SQLiteOpenHelper {
         return map;
     }
 
+    public static Map<String, Integer> loadStepsByDateForLastWeek(Context context) {
+        // Map to store the date and the corresponding step count
+        Map<String, Integer> stepsByDateMap = new TreeMap<>();
+
+        // Get the readable database
+        StepAppOpenHelper databaseHelper = new StepAppOpenHelper(context);
+        SQLiteDatabase database = databaseHelper.getReadableDatabase();
+
+        // Get the current date
+        Calendar calendar = Calendar.getInstance();
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd", Locale.getDefault());
+
+        // Iterate through the last 7 days
+        for (int i = 0; i < 7; i++) {
+            // Get the date string for the current iteration
+            String date = sdf.format(calendar.getTime());
+
+            // Query to get the number of steps for the current date
+            String query = "SELECT COUNT(*) FROM " + TABLE_NAME + " WHERE " + KEY_DAY + " = ?";
+            Cursor cursor = database.rawQuery(query, new String[]{date});
+
+            // Get the count from the cursor
+            if (cursor.moveToFirst()) {
+                int stepsCount = cursor.getInt(0);
+                stepsByDateMap.put(date, stepsCount);
+            }
+
+            // Move to the previous day
+            calendar.add(Calendar.DAY_OF_MONTH, -1);
+            cursor.close();
+        }
+
+        // Close the database
+        database.close();
+
+
+        return stepsByDateMap;
+    }
+
 
     @Override
     public void onCreate(SQLiteDatabase sqLiteDatabase) {
@@ -137,4 +179,6 @@ public class StepAppOpenHelper extends SQLiteOpenHelper {
     public void onUpgrade(SQLiteDatabase sqLiteDatabase, int i, int i1) {
 
     }
+
+
 }

@@ -3,25 +3,20 @@ package com.example.stepappv4.ui.Report;
 import static com.example.stepappv4.StepAppOpenHelper.loadStepsByHour;
 
 import android.os.Bundle;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Button;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import androidx.annotation.ColorLong;
 import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
-import androidx.lifecycle.ViewModelProvider;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
-import java.util.TimeZone;
 import java.util.TreeMap;
 
 
@@ -31,16 +26,13 @@ import com.anychart.chart.common.dataentry.DataEntry;
 import com.anychart.chart.common.dataentry.ValueDataEntry;
 import com.anychart.charts.Cartesian;
 import com.anychart.core.cartesian.series.Column;
-import com.anychart.enums.Anchor;
 import com.anychart.enums.HoverMode;
-import com.anychart.enums.Position;
 import com.anychart.enums.TooltipPositionMode;
 import com.example.stepappv4.StepAppOpenHelper;
 import com.example.stepappv4.databinding.FragmentReportBinding;
 import com.example.stepappv4.R;
 import com.google.android.material.tabs.TabLayout;
 import androidx.annotation.Nullable;
-
 
 public class ReportFragment extends Fragment {
 
@@ -52,7 +44,6 @@ public class ReportFragment extends Fragment {
     String current_time = new SimpleDateFormat("yyyy-MM-dd").format(cDate);
 
     public Map<Integer, Integer> stepsByHour = null;
-
     private FragmentReportBinding binding;
 
     public View onCreateView(@NonNull LayoutInflater inflater,
@@ -61,14 +52,13 @@ public class ReportFragment extends Fragment {
         binding = FragmentReportBinding.inflate(inflater, container, false);
         View root = binding.getRoot();
 
-        // Create column chart
-        anyChartView = root.findViewById(R.id.hourBarChart);
+        // Initialize chart view
+        anyChartView = root.findViewById(R.id.barChart);
         anyChartView.setProgressBar(root.findViewById(R.id.loadingBar));
 
-        Cartesian cartesian = createColumnChart();
-        anyChartView.setBackgroundColor("#00000000");
+        // Create initial chart (hourly)
+        Cartesian cartesian = createHourBarChart();
         anyChartView.setChart(cartesian);
-
 
         return root;
     }
@@ -79,80 +69,59 @@ public class ReportFragment extends Fragment {
         binding = null;
     }
 
-    public Cartesian createColumnChart(){
-        //***** Read data from SQLiteDatabase *********/
-        // TODO 1 (YOUR TURN): Get the map with hours and number of steps for today
-        //  from the database and assign it to variable stepsByHour
+    public Cartesian createHourBarChart() {
         stepsByHour = loadStepsByHour(getContext(), current_time);
-
-        // TODO 2 (YOUR TURN): Creating a new map that contains hours of the day from 0 to 23 and
-        //  number of steps during each hour set to 0
         Map<Integer, Integer> graph_map = new TreeMap<>();
         for (int i = 0; i < 24; i++)
             graph_map.put(i, 0);
-
-        // TODO 3 (YOUR TURN): Replace the number of steps for each hour in graph_map
-        //  with the number of steps read from the database
         graph_map.putAll(stepsByHour);
 
-        //***** Create column chart using AnyChart library *********/
-        // TODO 4: Create and get the cartesian coordinate system for column chart
         Cartesian cartesian = AnyChart.column();
-
-        // TODO 5: Create data entries for x and y axis of the graph
         List<DataEntry> data = new ArrayList<>();
-
-        for (Map.Entry<Integer,Integer> entry : graph_map.entrySet())
+        for (Map.Entry<Integer, Integer> entry : graph_map.entrySet())
             data.add(new ValueDataEntry(entry.getKey(), entry.getValue()));
 
-        // TODO 6: Add the data to column chart and get the columns
         Column column = cartesian.column(data);
-
-        //***** Modify the UI of the chart *********/
-       // TODO 7 (YOUR TURN): Change the color of column chart and its border
         column.fill("#FF0000");
 
-
-        // TODO 8: Modifying properties of tooltip
-        column.tooltip()
-                .titleFormat("At hour: {%X}")
-                .format("{%Value} Steps")
-                .anchor(Anchor.RIGHT_BOTTOM);
-
-        // TODO 9 (YOUR TURN): Modify column chart tooltip properties
-        column.tooltip()
-                .position(Position.CENTER)
-                .anchor(Anchor.RIGHT_CENTER)
-                .offsetX(5d)
-                .offsetY(5d);
-
-
-
-        // Modifying properties of cartesian
-        cartesian.tooltip().positionMode(TooltipPositionMode.POINT);
-        cartesian.interactivity().hoverMode(HoverMode.BY_X);
-        cartesian.yScale().minimum(0);
-
-
-        // TODO 10 (YOUR TURN): Modify the UI of the cartesian
-        cartesian.yAxis(0).labels().format("{%Value} Steps");
-        cartesian.xAxis(0).title("Hour of the day");
-        cartesian.yAxis(0).title("Number of steps");
-        cartesian.legend().enabled(true);
-        cartesian.legend().fontSize(13d);
-        cartesian.legend().padding(0d, 0d, 10d, 0d);
-        cartesian.title("Number of steps per hour");
-        cartesian.title().padding(0d, 0d, 10d, 0d);
-        cartesian.title().fontSize(16d);
-        cartesian.title().fontColor("#1EB980");
-
-
-
+        // Tooltip and UI setup for hourly chart
+        setupChartUI(cartesian, "Number of steps per hour", "Hour of the day", "Number of steps");
         return cartesian;
     }
 
+    public Cartesian createWeeklyBarChart() {
+        Map<String, Integer> weeklySteps = StepAppOpenHelper.loadStepsByDateForLastWeek(getContext());
+        Cartesian cartesian = AnyChart.column();
+        List<DataEntry> data = new ArrayList<>();
 
-    // TODO: Logic for tab switching
+        for (Map.Entry<String, Integer> entry : weeklySteps.entrySet()) {
+            data.add(new ValueDataEntry(entry.getKey(), entry.getValue()));
+        }
+
+        Column column = cartesian.column(data);
+        column.fill("#00FF00"); // Change color for weekly chart
+
+        // Tooltip and UI setup for weekly chart
+        setupChartUI(cartesian, "Number of steps in the last week", "Date", "Number of steps");
+        return cartesian;
+    }
+
+    private void setupChartUI(Cartesian cartesian, String title, String xAxisTitle, String yAxisTitle) {
+        cartesian.tooltip().positionMode(TooltipPositionMode.POINT);
+        cartesian.interactivity().hoverMode(HoverMode.BY_X);
+        cartesian.yScale().minimum(0);
+        cartesian.yAxis(0).labels().format("{%Value} Steps");
+        cartesian.xAxis(0).title(xAxisTitle);
+        cartesian.yAxis(0).title(yAxisTitle);
+        cartesian.legend().enabled(true);
+        cartesian.legend().fontSize(13d);
+        cartesian.legend().padding(0d, 0d, 10d, 0d);
+        cartesian.title(title);
+        cartesian.title().padding(0d, 0d, 10d, 0d);
+        cartesian.title().fontSize(16d);
+        cartesian.title().fontColor("#1EB980");
+    }
+
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
@@ -164,12 +133,13 @@ public class ReportFragment extends Fragment {
         tabLayout.addOnTabSelectedListener(new TabLayout.OnTabSelectedListener() {
             @Override
             public void onTabSelected(TabLayout.Tab tab) {
-                // Update the chart based on the selected tab
                 if (tab.getPosition() == 0) {
                     // Load hourly report
+                    anyChartView.setChart(createHourBarChart());
                     Toast.makeText(getActivity(), "Hourly Report Selected", Toast.LENGTH_SHORT).show();
                 } else {
                     // Load daily report
+                    anyChartView.setChart(createWeeklyBarChart());
                     Toast.makeText(getActivity(), "Daily Report Selected", Toast.LENGTH_SHORT).show();
                 }
             }
@@ -178,7 +148,15 @@ public class ReportFragment extends Fragment {
             public void onTabUnselected(TabLayout.Tab tab) {}
 
             @Override
-            public void onTabReselected(TabLayout.Tab tab) {}
+            public void onTabReselected(TabLayout.Tab tab) {
+                // Optionally, you can refresh the chart on re-selection
+                if (tab.getPosition() == 0) {
+                    anyChartView.setChart(createHourBarChart());
+                } else {
+                    anyChartView.setChart(createWeeklyBarChart());
+                }
+            }
         });
     }
+
 }
