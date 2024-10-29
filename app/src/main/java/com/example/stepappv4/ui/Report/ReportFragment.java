@@ -57,7 +57,8 @@ public class ReportFragment extends Fragment {
         anyChartView.setProgressBar(root.findViewById(R.id.loadingBar));
 
         // Create initial chart (hourly)
-        Cartesian cartesian = createHourBarChart();
+//        Cartesian cartesian = createHourBarChart();
+        Cartesian cartesian = createWeeklyBarChart();
         anyChartView.setChart(cartesian);
 
         return root;
@@ -84,7 +85,6 @@ public class ReportFragment extends Fragment {
         Column column = cartesian.column(data);
         column.fill("#FF0000");
 
-        // Tooltip and UI setup for hourly chart
         setupChartUI(cartesian, "Number of steps per hour", "Hour of the day", "Number of steps");
         return cartesian;
     }
@@ -134,11 +134,9 @@ public class ReportFragment extends Fragment {
             @Override
             public void onTabSelected(TabLayout.Tab tab) {
                 if (tab.getPosition() == 0) {
-                    // Load hourly report
                     anyChartView.setChart(createHourBarChart());
                     Toast.makeText(getActivity(), "Hourly Report Selected", Toast.LENGTH_SHORT).show();
                 } else {
-                    // Load daily report
                     anyChartView.setChart(createWeeklyBarChart());
                     Toast.makeText(getActivity(), "Daily Report Selected", Toast.LENGTH_SHORT).show();
                 }
@@ -149,7 +147,6 @@ public class ReportFragment extends Fragment {
 
             @Override
             public void onTabReselected(TabLayout.Tab tab) {
-                // Optionally, you can refresh the chart on re-selection
                 if (tab.getPosition() == 0) {
                     anyChartView.setChart(createHourBarChart());
                 } else {

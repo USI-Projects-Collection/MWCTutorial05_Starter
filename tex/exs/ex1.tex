@@ -1,0 +1,24 @@
+\section{Exercise 1 – Android Basics}
+
+\begin{enumerate}
+    \item  \textbf{What does the \texttt{android:minSdkVersion} in an Android project indicate?}
+
+    The \texttt{android:minSdkVersion} attribute specifies the minimum Android OS version that the app can run on. It ensures that the app will only be installable on devices with an OS version \textit{equal to or higher} than the declared version. For example, if \texttt{minSdkVersion} is set to 21, the app will only work on devices running Android 5.0 (Lollipop) or newer.
+    \\
+    
+    \item \textbf{Why does Android documentation indicate that declaring the attribute \texttt{android:\\maxSdkVersion} is not recommended?}
+
+    The Android documentation advises against using \texttt{maxSdkVersion} because it restricts the app's availability for future Android versions. If this attribute is set, the app won't be available for users running newer versions of Android, even if it could still work. This can cause compatibility and distribution issues as new Android versions are released.
+    \\
+    
+    \item \textbf{What are the two types of Navigation Drawer? Explain the differences between the two types.}
+
+    There are two types of Navigation Drawer in Android:
+    \begin{itemize}
+        \item \textbf{Permanent Navigation Drawer}: This type is always visible alongside the app's content, often used in tablet layouts or on large screens. The main content of the app is displayed next to the drawer.
+        \item \textbf{Modal Navigation Drawer}: This type is hidden by default and slides in over the app's content when triggered. It is commonly used in mobile apps where screen space is limited.
+    \end{itemize}
+    
+
+    \textbf{Differences:} The permanent drawer is better suited for larger screens where space is not an issue, while the modal drawer is more suitable for smaller screens, as it saves space by presenting the drawer as an overlay.
+\end{enumerate}

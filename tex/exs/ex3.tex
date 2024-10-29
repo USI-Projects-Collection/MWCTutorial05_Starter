@@ -1,0 +1,61 @@
+\section{Exercise 3 – Step Counter}
+
+
+\subsection{Android STEP\_DETECTOR}
+First of all I modified the variable \texttt{accSensor} in the \texttt{StepsFragment} class to be of type:\\ \texttt{Sensor.TYPE\_STEP\_DETECTOR}. I could have easly have defined another variable but I wanted to make sure that all the counts were updted thanks to this sensor and not the previsouly used\\ \texttt{Sensor.TYP\_LINEAR\_ACCELERATION}.
+
+\begin{verbatim}
+    accSensor = sensorManager.getDefaultSensor(Sensor.TYPE_STEP_DETECTOR);
+\end{verbatim}
+
+Then I moved to the \texttt{StepCounterListener} class and mofied the \texttt{onSensorChanged} method to call the \texttt{countSteps} method. 
+
+\lstinputlisting[
+    firstline=101, 
+    lastline=103, 
+    firstnumber=101,
+    caption=\texttt{\codepath/StepCounterListener.java}
+]{\codepath/StepCounterListener.java}
+
+\lstinputlisting[
+    firstline=150, 
+    lastline=156, 
+    firstnumber=150,
+    caption=\texttt{\codepath/StepCounterListener.java}
+]{\codepath/StepCounterListener.java}
+In this first part of the method I add the steps detected by the sensor to the step count variable, log the number of steps detected and save the current step count to the shared preferences.
+
+
+\subsection{Update Circulat Progress Bar}
+In the second part of method \texttt{countSteps} from the previous exercise I update the step count text view and the step count progress bar.
+
+\lstinputlisting[
+    firstline=150, 
+    lastline=160, 
+    firstnumber=150,
+    caption=\texttt{\codepath/StepCounterListener.java}
+]{\codepath/StepCounterListener.java}
+
+
+\newpage
+
+\subsection{Persistant Step Count}
+In the last part of the \texttt{onCreate} method, I implemented functionality to load the number of steps from the database. This ensures that the step count persists after the user swtched to another fragment or even after the application is closed and reopened.
+
+First, I retrieve the current timestamp and format it to extract the date. This is important because I want to load the step count corresponding to the current day. 
+
+\lstinputlisting[
+    firstline=99, 
+    lastline=103, 
+    firstnumber=99,
+    caption=\texttt{\codepath/ui/steps/StepsFragment.java}
+]{\codepath/ui/steps/StepsFragment.java}
+
+Next, I use the \texttt{loadSingleRecord} method from the \texttt{StepAppOpenHelper} class to retrieve the number of steps for the current day. This method queries the database and returns the stored step count, which I then display on the \texttt{stepsTextView} and update the progress bar accordingly.
+
+\lstinputlisting[
+    firstline=105, 
+    lastline=108, 
+    firstnumber=105,
+    caption=\texttt{\codepath/ui/steps/StepsFragment.java}
+]{\codepath/ui/steps/StepsFragment.java}

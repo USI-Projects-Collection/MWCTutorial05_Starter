@@ -13,3 +13,9 @@
 .externalNativeBuild
 .cxx
 local.properties
+
+# latex
+*.out
+*.log
+*.aux
+*.toc
