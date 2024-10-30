@@ -152,24 +152,10 @@ public class ReportFragment extends Fragment {
             }
 
             @Override
-            public void onTabUnselected(TabLayout.Tab tab) {
-                if (tab.getPosition() == 0) {
-                    dailyChart.setVisibility(View.INVISIBLE);
-                } else {
-                    hourlyChart.setVisibility(View.INVISIBLE);
-                }
-            }
+            public void onTabUnselected(TabLayout.Tab tab) {}
 
             @Override
-            public void onTabReselected(TabLayout.Tab tab) {
-                // Optionally refresh the chart on re-selection
-                if (tab.getPosition() == 0) {
-                    hourlyChart.setVisibility(View.VISIBLE);
-                } else {
-                    dailyChart.setVisibility(View.VISIBLE);
-                }
-            }
+            public void onTabReselected(TabLayout.Tab tab) {}
         });
     }
-
 }

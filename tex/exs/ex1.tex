@@ -8,9 +8,9 @@
         \textit{fragment\_report.xml}.
 
     \lstinputlisting[
-        firstline=10,
+        firstline=11,
         lastline=16,
-        firstnumber=10,
+        firstnumber=18,
         caption=\texttt{\codepath/res/layout/fragment\_report.xml},
         label={lst:frag}
     ]{\codepath/res/layout/fragment_report.xml}
@@ -56,17 +56,43 @@
     This class has been heavily refactored as it had a long method called \textit{createColumnChart} that was previously used to generate the hourly chart.
     Key parts of this method has been isolated to be reused also for the generation of the daily chart.
 
-
-
-
-
     \lstinputlisting[
-        firstline=126,
+        firstline=130,
         lastline=160,
-        firstnumber=126,
+        firstnumber=130,
         caption=\texttt{\codepath/java/com/example/stepappv4/ui/Report/ReportFragment.java},
         label={lst:reportFragmentMain}
     ]{\codepath/java/com/example/stepappv4/ui/Report/ReportFragment.java}
+    
+    The main method is displayed in Code~\ref{lst:reportFragmentMain}.
+        This method handles the
+        logic to switch between the two charts.
+        Unfortunately \textbf{anyChart} class does not collaborate and does not reset the chart
+        once created.
+        Extensive trouble-shooting and many different attempts and approaches to make it work had
+        been taken without success.
+        The last attempt which seemed the most promising had the goal to create two charts and
+        switch their visibility based on an event listener on the two Tab's buttons.
+        In order to achieve to the \textit{fragment\_report.xml} I added another
+        \textit{AnyChartView} Object as shown in Code~\ref{lst:twoChars}.
+        
+    \lstinputlisting[
+        firstline=20,
+        lastline=40,
+        firstnumber=20,
+        caption=\texttt{\codepath/res/layout/fragment\_report.xml},
+        label={lst:twoChars}
+    ]{\codepath/res/layout/fragment_report.xml}
+    
+    In method \textit{onViewCreated} \ref{lst:reportFragmentMain} I simply handle their
+        visibilty based on the current
+        selected Tab.
 
+        
+        
+\section{Important Notes}
 
-
+The problem has been investigated with both TAs but we could not figure out the exact source of
+the problem.
+A fast internet research suggest that this might have to do with the fact that anyChart
+is a free trial version and does not provide graph refreshing.
