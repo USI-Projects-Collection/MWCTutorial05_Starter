@@ -54,16 +54,15 @@ public class ReportFragment extends Fragment {
         binding = FragmentReportBinding.inflate(inflater, container, false);
         View root = binding.getRoot();
 
-        // Initialize chart views
         hourlyChart = root.findViewById(R.id.hourlyChart);
         dailyChart = root.findViewById(R.id.dailyChart);
         hourlyChart.setProgressBar(root.findViewById(R.id.loadingBar));
         dailyChart.setProgressBar(root.findViewById(R.id.loadingBar));
 
-        // Create initial chart (hourly)
         hourlyChart.setChart(createHourBarChart());
         dailyChart.setChart(createWeeklyBarChart());
 
+        hourlyChart.setVisibility(View.VISIBLE);
         dailyChart.setVisibility(View.INVISIBLE);
 
         return root;
@@ -93,6 +92,7 @@ public class ReportFragment extends Fragment {
         setupChartUI(cartesian, "Number of steps per hour", "Hour of the day", "Number of steps");
         return cartesian;
     }
+
 
     public Cartesian createWeeklyBarChart() {
         Map<String, Integer> weeklySteps = StepAppOpenHelper.loadStepsByDateForLastWeek(getContext());
@@ -152,17 +152,24 @@ public class ReportFragment extends Fragment {
             }
 
             @Override
-            public void onTabUnselected(TabLayout.Tab tab) {}
+            public void onTabUnselected(TabLayout.Tab tab) {
+                if (tab.getPosition() == 0) {
+                    dailyChart.setVisibility(View.INVISIBLE);
+                } else {
+                    hourlyChart.setVisibility(View.INVISIBLE);
+                }
+            }
 
             @Override
             public void onTabReselected(TabLayout.Tab tab) {
                 // Optionally refresh the chart on re-selection
                 if (tab.getPosition() == 0) {
-                    hourlyChart.setChart(createHourBarChart());
+                    hourlyChart.setVisibility(View.VISIBLE);
                 } else {
-                    dailyChart.setChart(createWeeklyBarChart());
+                    dailyChart.setVisibility(View.VISIBLE);
                 }
             }
         });
     }
+
 }

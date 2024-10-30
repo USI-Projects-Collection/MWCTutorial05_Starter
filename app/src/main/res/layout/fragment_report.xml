@@ -26,8 +26,7 @@
         app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/tabLayout"
-        app:layout_constraintVertical_bias="0.501"
-        android:visibility="visible"/>
+        app:layout_constraintVertical_bias="0.501"/>
 
     <com.anychart.AnyChartView
         android:id="@+id/dailyChart"
@@ -38,8 +37,7 @@
         app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/tabLayout"
-        app:layout_constraintVertical_bias="0.501"
-        android:visibility="invisible"/>
+        app:layout_constraintVertical_bias="0.501"/>
 
     <com.google.android.material.progressindicator.CircularProgressIndicator
         android:id="@+id/loadingBar"
