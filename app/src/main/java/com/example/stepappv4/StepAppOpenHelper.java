@@ -29,6 +29,7 @@ public class StepAppOpenHelper extends SQLiteOpenHelper {
     public static final String CREATE_TABLE_SQL = "CREATE TABLE  " + TABLE_NAME + " (" + KEY_ID + " INTEGER PRIMARY KEY, " +
             KEY_DAY + " TEXT, " + KEY_HOUR + "  TEXT, " + KEY_TIMESTAMP + "  TEXT);";
 
+
     public StepAppOpenHelper (Context context)
     {
         super(context,DATABASE_NAME,null,DATABASE_VERSION);
@@ -97,74 +98,56 @@ public class StepAppOpenHelper extends SQLiteOpenHelper {
 
 
     public static Map<Integer, Integer> loadStepsByHour(Context context, String date){
-        // 1. Define a map to store the hour and number of steps as key-value pairs
         Map<Integer, Integer>  map = new HashMap<>();
 
-        // 2. Get the readable database
         StepAppOpenHelper databaseHelper = new StepAppOpenHelper(context);
         SQLiteDatabase database = databaseHelper.getReadableDatabase();
 
-        // 3. Define the query to get the data
         Cursor cursor = database.rawQuery("SELECT hour, COUNT(*)  FROM num_steps " +
                 "WHERE day = ? GROUP BY hour ORDER BY  hour ASC ", new String [] {date});
 
-        // 4. Iterate over returned elements on the cursor
         cursor.moveToFirst();
         for (int index=0; index < cursor.getCount(); index++){
             Integer tmpKey = Integer.parseInt(cursor.getString(0));
             Integer tmpValue = Integer.parseInt(cursor.getString(1));
 
-            //2. Put the data from the database into the map
             map.put(tmpKey, tmpValue);
 
 
             cursor.moveToNext();
         }
 
-        // 5. Close the cursor and database
         cursor.close();
         database.close();
 
-        // 6. Return the map with hours and number of steps
         return map;
     }
 
     public static Map<String, Integer> loadStepsByDateForLastWeek(Context context) {
-        // Map to store the date and the corresponding step count
         Map<String, Integer> stepsByDateMap = new TreeMap<>();
 
-        // Get the readable database
         StepAppOpenHelper databaseHelper = new StepAppOpenHelper(context);
         SQLiteDatabase database = databaseHelper.getReadableDatabase();
 
-        // Get the current date
         Calendar calendar = Calendar.getInstance();
         SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd", Locale.getDefault());
 
-        // Iterate through the last 7 days
         for (int i = 0; i < 7; i++) {
-            // Get the date string for the current iteration
             String date = sdf.format(calendar.getTime());
 
-            // Query to get the number of steps for the current date
             String query = "SELECT COUNT(*) FROM " + TABLE_NAME + " WHERE " + KEY_DAY + " = ?";
             Cursor cursor = database.rawQuery(query, new String[]{date});
 
-            // Get the count from the cursor
             if (cursor.moveToFirst()) {
                 int stepsCount = cursor.getInt(0);
                 stepsByDateMap.put(date, stepsCount);
             }
 
-            // Move to the previous day
             calendar.add(Calendar.DAY_OF_MONTH, -1);
             cursor.close();
         }
 
-        // Close the database
         database.close();
-
-
         return stepsByDateMap;
     }
 

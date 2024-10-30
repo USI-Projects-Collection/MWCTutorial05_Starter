@@ -11,20 +11,62 @@
         firstline=10,
         lastline=16,
         firstnumber=10,
-        caption=\texttt{\codepath/res/layout/fragment\_report.xml}
-        ,label={lst:frag}
+        caption=\texttt{\codepath/res/layout/fragment\_report.xml},
+        label={lst:frag}
     ]{\codepath/res/layout/fragment_report.xml}
     
-    I also rename the \textbf{AnyChartView} from \textit{hourBarChart} to \textit{barChart}
-        since it will now follow a double purpose not only for hourly display but also for daily
-        count of steps.
+    I renamed the \textbf{AnyChartView} from \textit{hourBarChart} to \textit{barChart}
+        since it will now follow a double purpose; not only for hourly display but also for daily total count of steps.
     
-\subsection{StepAppOpenHelper.java}
-    
-
-
+    \subsection{StepAppOpenHelper.java}
+        In this class, I implemented the method \textbf{loadStepsByDateForLastWeek} to retrieve the daily step counts for the past week from the database, which are then visualized in the report.
+        
+        This method queries the database for each of the last seven days, counting the recorded steps for each day and storing the results in a \texttt{Map<String, Integer>}. The map pairs each date with its corresponding step count, allowing the app to display a daily summary in the report chart.
+        
+        The implementation ensures that each date’s steps are fetched correctly and displayed in order, by iterating over the last seven days and formatting dates according to the database’s format. This is achieved using a \texttt{Calendar} instance and a \texttt{SimpleDateFormat} object, which matches the database date format (e.g., \texttt{"yyyy-MM-dd"}).
+        
+        \lstinputlisting[
+            firstline=125,
+            lastline=151,
+            firstnumber=125,
+            caption=\texttt{\codepath/java/com/example/stepappv4/StepAppOpenHelper.java},
+            label={lst:db}
+        ]{\codepath/java/com/example/stepappv4/StepAppOpenHelper.java}
+        
+        The \texttt{loadStepsByDateForLastWeek} method includes an SQL query to count the step entries recorded in the database for each date in the past week. The query works as follows:
+        
+        \begin{itemize}
+            \item The SQL command \texttt{SELECT COUNT(*)} counts the total number of rows that match a specific condition, in this case, the number of entries for a given day.
+            \item The table name \texttt{TABLE\_NAME} is the name of the database table where step data is stored, while \texttt{KEY\_DAY} represents the column containing each entry's date.
+            \item The \texttt{WHERE} clause specifies a condition, with \texttt{KEY\_DAY = ?}, where \texttt{?} is a placeholder that gets replaced by a date parameter.
+            \item The parameter \texttt{date} is inserted into the query using the \texttt{rawQuery} method's second argument, which passes an array of parameters to replace placeholders in the query string.
+        \end{itemize}
+        
+        After executing the query, a \texttt{Cursor} object is used to retrieve the results. If the query successfully finds entries for the specified date, the number of steps is extracted using \texttt{cursor.getInt(0)}, which accesses the first column in the result set, representing the step count.
+        
+        For example, if \texttt{TABLE\_NAME} is \texttt{"steps"} and \texttt{KEY\_DAY} is \texttt{"date"}, with \texttt{date = "2024-10-28"}, the query would look like this:
+        
+        \begin{lstlisting}[language=SQL,label={lst:query}]
+            SELECT COUNT(*) FROM steps WHERE date = "2024-10-28";
+        \end{lstlisting}
+        
+        This query counts all rows where the \texttt{date} column matches \texttt{"2024-10-28"}, giving the total number of steps recorded for that day. The resulting count is stored in the \texttt{stepsByDateMap} for later visualization in the chart.
+        
 \subsection{ReportFragment.java}
+    This class has been heavily refactored as it had a long method called \textit{createColumnChart} that was previously used to generate the hourly chart.
+    Key parts of this method has been isolated to be reused also for the generation of the daily chart.
 
+
+
+
+
+    \lstinputlisting[
+        firstline=126,
+        lastline=160,
+        firstnumber=126,
+        caption=\texttt{\codepath/java/com/example/stepappv4/ui/Report/ReportFragment.java},
+        label={lst:reportFragmentMain}
+    ]{\codepath/java/com/example/stepappv4/ui/Report/ReportFragment.java}
 
 
 

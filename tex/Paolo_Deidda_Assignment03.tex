@@ -1,4 +1,5 @@
 \documentclass{article}
+
 \usepackage{listings}
 \usepackage{booktabs}
 \usepackage{here}
@@ -60,7 +61,7 @@
 
 \author{
   Paolo Deidda \\
-  \text{paolo.deidda@usi.ch} \\ 
+  \text{paolo.deidda@usi.ch} \\
   \url{https://github.com/USI-Projects-Collection/MWCTutorial05_Starter}
 }
 
@@ -88,15 +89,17 @@
 
 \begin{figure}[H]
     \centering
-    \includegraphics[width=0.30\textwidth]{res/img/ops}
+    \includegraphics[width=0.31\textwidth]{res/img/ops}
     \hspace{1cm}
-    \includegraphics[width=0.30\textwidth]{res/img/oneAndOnlyPicture}
-    \caption{Report Fragment: hourly and daily chart view}
+    \includegraphics[width=0.31\textwidth]{res/img/oneAndOnlyPicture}
+    \captionsetup{labelformat=empty} % Temporarily remove "Figure" label
+    \caption{} % Empty caption
     \label{fig:thePicture}
+    \captionsetup{labelformat=default} % Restore default for other captions
 \end{figure}
 
 \newpage
-\include{exs/ex1}
+\input{exs/ex1}
 
 %\newpage
 %\include{exs/ex2}
