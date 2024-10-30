@@ -46,23 +46,25 @@ public class ReportFragment extends Fragment {
     public Map<Integer, Integer> stepsByHour = null;
     private FragmentReportBinding binding;
 
-    private int brutalFlag = 0;
+    private AnyChartView hourlyChart;
+    private AnyChartView dailyChart;
 
-
-    public View onCreateView(@NonNull LayoutInflater inflater,
-                             ViewGroup container, Bundle savedInstanceState) {
-
+    @Override
+    public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         binding = FragmentReportBinding.inflate(inflater, container, false);
         View root = binding.getRoot();
 
-        // Initialize chart view
-        anyChartView = root.findViewById(R.id.barChart);
-        anyChartView.setProgressBar(root.findViewById(R.id.loadingBar));
+        // Initialize chart views
+        hourlyChart = root.findViewById(R.id.hourlyChart);
+        dailyChart = root.findViewById(R.id.dailyChart);
+        hourlyChart.setProgressBar(root.findViewById(R.id.loadingBar));
+        dailyChart.setProgressBar(root.findViewById(R.id.loadingBar));
 
-        Cartesian cartesian = createHourBarChart();
-//        Cartesian cartesian = createWeeklyBarChart();
+        // Create initial chart (hourly)
+        hourlyChart.setChart(createHourBarChart());
+        dailyChart.setChart(createWeeklyBarChart());
 
-        anyChartView.setChart(cartesian);
+        dailyChart.setVisibility(View.INVISIBLE);
 
         return root;
     }
@@ -136,14 +138,15 @@ public class ReportFragment extends Fragment {
         tabLayout.addOnTabSelectedListener(new TabLayout.OnTabSelectedListener() {
             @Override
             public void onTabSelected(TabLayout.Tab tab) {
-
                 if (tab.getPosition() == 0) {
                     binding.textView5.setText(R.string.hourly_report);
-                    anyChartView.setChart(createHourBarChart());
+                    hourlyChart.setVisibility(View.VISIBLE);
+                    dailyChart.setVisibility(View.INVISIBLE);
                     Toast.makeText(getActivity(), "Hourly Report Selected", Toast.LENGTH_SHORT).show();
                 } else {
                     binding.textView5.setText(R.string.daily_report);
-                    anyChartView.setChart(createWeeklyBarChart());
+                    hourlyChart.setVisibility(View.INVISIBLE);
+                    dailyChart.setVisibility(View.VISIBLE);
                     Toast.makeText(getActivity(), "Daily Report Selected", Toast.LENGTH_SHORT).show();
                 }
             }
@@ -153,13 +156,13 @@ public class ReportFragment extends Fragment {
 
             @Override
             public void onTabReselected(TabLayout.Tab tab) {
+                // Optionally refresh the chart on re-selection
                 if (tab.getPosition() == 0) {
-                    anyChartView.setChart(createHourBarChart());
+                    hourlyChart.setChart(createHourBarChart());
                 } else {
-                    anyChartView.setChart(createWeeklyBarChart());
+                    dailyChart.setChart(createWeeklyBarChart());
                 }
             }
         });
     }
-
 }

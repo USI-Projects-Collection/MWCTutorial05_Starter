@@ -228,10 +228,7 @@ class  StepCounterListener implements SensorEventListener{
                 databaseEntry.put(StepAppOpenHelper.KEY_HOUR, this.hour);
 
                 database.insert(StepAppOpenHelper.TABLE_NAME, null, databaseEntry);
-
             }
         }
     }
-
-
 }
